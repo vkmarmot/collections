@@ -1,0 +1,41 @@
+{
+    "name": "@tmc/collections",
+    "version": "1.0.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/vkmarmot/collections"
+    },
+    "bugs": {
+        "url": "https://github.com/vkmarmot/collections/issues"
+    },
+    "author": "Korneev V.A. <vkorneev@protonmail.com>",
+    "contributors": [
+        {
+            "name": "Korneev V.A",
+            "email": "vkorneev@protonmail.com"
+        }
+    ],
+    "main": "lib/index.js",
+    "license": "MIT",
+    "scripts": {
+        "type-check": "tsc --noEmit",
+        "type-check:watch": "npm run type-check -- --watch",
+        "build": "npm run build:types && npm run build:js",
+        "build:types": "tsc --emitDeclarationOnly",
+        "build:js": "webpack"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.2.3",
+        "@babel/core": "^7.4.0",
+        "@babel/plugin-proposal-class-properties": "^7.4.0",
+        "@babel/plugin-proposal-object-rest-spread": "^7.4.0",
+        "@babel/preset-env": "^7.4.1",
+        "@babel/preset-typescript": "^7.3.3",
+        "@types/jest": "^25.2.1",
+        "babel-loader": "^8.0.6",
+        "jest": "^25.3.0",
+        "typescript": "^3.3.3",
+        "webpack": "^4.32.2",
+        "webpack-cli": "^3.3.2"
+    }
+}
