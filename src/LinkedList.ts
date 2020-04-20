@@ -113,12 +113,26 @@ export class LinkedList<T> {
         }
     }
 
-    public *getIterator() {
-        let current = this.first;
-        while (current) {
-            yield current;
-            current = current.next;
+    public getIterator(): Iterable<ILinkedListValue<T>> {
+        return {
+            [Symbol.iterator]: () => {
+                let current = this.first;
+                return {
+                    next(): IteratorResult<ILinkedListValue<T>> {
+                        if (!current) {
+                            return { done: true, value: undefined };
+                        }
+                        const next = current;
+                        current = current.next;
+                        return { done: false, value: next };
+                    }
+                }
+            }
         }
+        // while (current) {
+        //     yield current;
+        //     current = current.next;
+        // }
     }
 }
 
