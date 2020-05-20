@@ -35,6 +35,14 @@ describe("LinkedList", () => {
         }
         expect(list).toEqual([1, 2, 3, 8]);
 
+        list = [];
+        for (const val of linkedList.getIterator()) {
+            linkedList.delete(val.value);
+            linkedList.push(val.value);
+            list.push(val.value);
+        }
+        expect(list).toEqual([1, 2, 3, 8]);
+
         linkedList.delete(3);
 
         list = [];

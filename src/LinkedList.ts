@@ -1,11 +1,16 @@
 export interface ILinkedListValue<T> {
     next: ILinkedListValue<T> | undefined;
     previous: ILinkedListValue<T> | undefined;
+    stamp: number;
     value: T;
 }
+const DELTA = Number.EPSILON;
+const MAX_VALUE = Number.MAX_VALUE  / 4;
+
 export class LinkedList<T> {
     first: undefined | ILinkedListValue<T>;
     last: undefined |ILinkedListValue<T>;
+    private stamp = Number.MIN_VALUE;
 
     public insertAfter(previousValue: T, newVal: T) {
         const iterator = this.getIterator();
@@ -14,7 +19,8 @@ export class LinkedList<T> {
                 const newValue: ILinkedListValue<T> = {
                     value: newVal,
                     next: value.next,
-                    previous: value
+                    previous: value,
+                    stamp: this.stamp
                 };
                 value.next = newValue;
                 if (!newValue.next) {
@@ -54,7 +60,8 @@ export class LinkedList<T> {
                 const newValue: ILinkedListValue<T> = {
                     value: val,
                     next: value,
-                    previous: value.previous
+                    previous: value.previous,
+                    stamp: this.stamp
                 };
                 if (value.previous) {
                     value.previous.next = newValue;
@@ -71,7 +78,8 @@ export class LinkedList<T> {
             const newValue: ILinkedListValue<T> = {
                 value: val,
                 next: undefined,
-                previous: this.last
+                previous: this.last,
+                stamp: this.stamp
             };
             if (this.last) {
                 this.last.next = newValue;
@@ -87,7 +95,8 @@ export class LinkedList<T> {
         const newVal = {
             value: val,
             next: undefined,
-            previous: this.last
+            previous: this.last,
+            stamp: this.stamp
         };
         if (this.last) {
             this.last.next = newVal;
@@ -102,7 +111,8 @@ export class LinkedList<T> {
         const newVal = {
             value: val,
             next: this.first,
-            previous: undefined
+            previous: undefined,
+            stamp: this.stamp
         };
         if (this.first) {
             this.first.previous = newVal;
@@ -113,26 +123,46 @@ export class LinkedList<T> {
         }
     }
 
-    public getIterator(): Iterable<ILinkedListValue<T>> {
+    private createIterator(): Iterable<ILinkedListValue<T>> {
+        const { stamp } = this;
+        this.stamp += DELTA;
         return {
             [Symbol.iterator]: () => {
                 let current = this.first;
                 return {
                     next(): IteratorResult<ILinkedListValue<T>> {
-                        if (!current) {
+                        // if (!current) {
+                        //     return { done: true, value: undefined };
+                        // }
+                        let next: ILinkedListValue<T>
+                        do {
+                            if (!current) {
+                                return { done: true, value: undefined };
+                            }
+                            next = current;
+                            current = current.next;
+                        } while (next.stamp > stamp)
+                        if (!next) {
                             return { done: true, value: undefined };
                         }
-                        const next = current;
-                        current = current.next;
                         return { done: false, value: next };
                     }
                 }
             }
+        };
+    }
+
+    public getIterator(): Iterable<ILinkedListValue<T>> {
+        if (this.stamp > MAX_VALUE) {
+            let item: ILinkedListValue<T> | undefined = this.first;
+            while (item) {
+                item.stamp = Number.MIN_VALUE;
+                item = item.next;
+            }
+            this.stamp = Number.MIN_VALUE;
         }
-        // while (current) {
-        //     yield current;
-        //     current = current.next;
-        // }
+
+        return this.createIterator();
     }
 }
 
