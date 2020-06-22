@@ -4,7 +4,7 @@ export interface ILinkedListValue<T> {
     stamp: number;
     value: T;
 }
-const DELTA = Number.EPSILON;
+const DELTA = 1E-10;
 const MAX_VALUE = Number.MAX_VALUE  / 4;
 
 export class LinkedList<T> {
